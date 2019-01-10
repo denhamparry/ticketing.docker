@@ -1,0 +1,1 @@
+docker rm -f $(docker ps -f "name=ticketing.*")
