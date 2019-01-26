@@ -1,0 +1,40 @@
+version: '3'
+services:
+  ticketing.messaging:
+    image: "rabbitmq:3-management"
+  ticketing.mongo:
+    image: "mongo"
+  ticketing.api:
+    ports:
+     - "3000:80"
+    image: "denhamparry/ticketing.api:latest"
+    environment:
+      - ValueFromKubernetesEnvVariable=This is the value from Docker enviroment variables
+        ValueOverride=This value is from the Docker ConfigMap
+        MessagingQueue=ticketing.docker
+        MessagingUsername=guest
+        MessagingPassword=guest
+        Messaging=ticketing.messaging
+        TicketingDb=mongodb://ticketing.mongo
+  ticketing.web:
+    ports:
+     - "3001:80"
+    image: "denhamparry/ticketing.web:latest"
+    environment:
+        - TicketingAPI=http://ticketing.api
+  ticketing.worker:
+    image: "denhamparry/ticketing.worker:latest"
+    environment:
+        - MessagingQueue=tickets.docker
+          Messaging=ticketing.messaging
+          MessagingUsername=guest
+          MessagingPassword=guest
+          WorkerName=DOCKER_WORKER
+          SignalR=http://ticketing.web/workers
+    depends_on:
+      - ticketing.web
+    restart: on-failure
+  ticketing.worker.api:
+    ports:
+     - "3002:80"
+    image: "denhamparry/ticketing.worker.api:latest"
