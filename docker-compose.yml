@@ -31,9 +31,7 @@ services:
           MessagingPassword=guest
           WorkerName=DOCKER_WORKER
           SignalR=http://ticketing.web/workers
-    depends_on:
-      - ticketing.web
-    restart: on-failure
+    restart: always
   ticketing.worker.api:
     ports:
      - "3002:80"
