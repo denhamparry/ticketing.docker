@@ -23,7 +23,7 @@ services:
     environment:
         - TicketingAPI=http://ticketing.api
   ticketing.worker:
-    image: "denhamparry/ticketing.worker:latest"
+    image: "denhamparry/ticketing.worker:boo"
     environment:
         - MessagingQueue=tickets.docker
           Messaging=ticketing.messaging
